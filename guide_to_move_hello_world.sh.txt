@@ -1,0 +1,12 @@
+Guide to Moving and Executing the 'Hello World' Bash Script in the Root Directory:
+
+1. Ensure that the script is executable:
+   chmod +x /workspace/hello_world.sh
+
+2. Move the script to the root directory with elevated permissions:
+   sudo mv /workspace/hello_world.sh /hello_world.sh
+
+3. Execute the script in the root directory to print 'Hello World':
+   sudo /hello_world.sh
+
+Please note: The above steps require a user with sudo privileges to execute commands that affect system files and directories.
