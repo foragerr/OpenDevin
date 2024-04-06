@@ -1,0 +1,5 @@
+TITLE:
+Create a bash script to print "Hello World" in the root directory.
+
+BODY:
+
