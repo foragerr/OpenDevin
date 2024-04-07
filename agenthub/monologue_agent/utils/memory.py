@@ -9,36 +9,12 @@ from . import json
 
 embedding_strategy = config.get("LLM_EMBEDDING_MODEL")
 
-# TODO: More embeddings: https://docs.llamaindex.ai/en/stable/examples/embeddings/OpenAI/
-# There's probably a more programmatic way to do this.
-if embedding_strategy == "llama2":
-    from llama_index.embeddings.ollama import OllamaEmbedding
-    embed_model = OllamaEmbedding(
-        model_name="llama2",
-        base_url=config.get_or_error("LLM_BASE_URL"),
-        ollama_additional_kwargs={"mirostat": 0},
-    )
-elif embedding_strategy == "openai":
-    from llama_index.embeddings.openai import OpenAIEmbedding
-    embed_model = OpenAIEmbedding(
-        model="text-embedding-ada-002",
-        api_key=config.get_or_error("LLM_API_KEY")
-    )
-elif embedding_strategy == "azureopenai":
-    from llama_index.embeddings.azure_openai import AzureOpenAIEmbedding  # Need to instruct to set these env variables in documentation
-    embed_model = AzureOpenAIEmbedding(
-        model="text-embedding-ada-002",
-        deployment_name=config.get_or_error("LLM_DEPLOYMENT_NAME"),
-        api_key=config.get_or_error("LLM_API_KEY"),
-        azure_endpoint=config.get_or_error("LLM_BASE_URL"),
-        api_version=config.get_or_error("LLM_API_VERSION"),
-    )
-else:
-    from llama_index.embeddings.huggingface import HuggingFaceEmbedding
-    embed_model = HuggingFaceEmbedding(
-        model_name="BAAI/bge-small-en-v1.5"
-    )
-
+# FIXME: Temporarily dropped support for other Embedding models
+from llama_index.embeddings.openai import OpenAIEmbedding
+embed_model = OpenAIEmbedding(
+    model="text-embedding-ada-002",
+    api_key=config.get_or_error("LLM_API_KEY")
+)
 
 class LongTermMemory:
     """
