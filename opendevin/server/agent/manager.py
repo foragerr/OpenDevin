@@ -120,10 +120,14 @@ class AgentManager:
         if model == "":
             model = LLM_MODEL
 
-        if not os.path.exists(directory):
-            print(f"Workspace directory {directory} does not exist. Creating it...")
-            os.makedirs(directory)
-        directory = os.path.relpath(directory, os.getcwd())
+        # if not os.path.exists(directory):
+        #     print(f"Workspace directory {directory} does not exist. Creating it...")
+        #     os.makedirs(directory)
+        # directory = os.path.relpath(directory, os.getcwd())
+
+        # Temp hack because manager running in a container cannot mkdir on host filesystem.
+        directory = os.environ.get('WORKSPACE_DIR', '/tmp/workspace')
+
         llm = LLM(model=model, api_key=api_key, base_url=api_base)
         AgentCls = Agent.get_cls(agent_cls)
         self.agent = AgentCls(llm)
