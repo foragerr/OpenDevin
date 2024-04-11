@@ -1,4 +1,7 @@
 import os
+import subprocess
+import tempfile
+from typing import List, Optional
 
 from dataclasses import dataclass
 
@@ -18,7 +21,7 @@ from .base import ExecutableAction
 PATH_PREFIX = '/workspace/'
 
 
-def validate_file_content(file_path: str, content: str) -> str:
+def validate_file_content(file_path: str, content: str) -> Optional[str]:
     """
     Validates the content of a code file by checking for syntax errors.
 
@@ -45,20 +48,43 @@ def validate_file_content(file_path: str, content: str) -> str:
         return f'Unsupported file type: {extension}'
 
 
-def _validate_python(content: str) -> str:
-    # cmd = f'python -c "{content}"'
-    # result = CmdRunAction(cmd).run( )
-    # if result.exit_code != 0:
-    #    return result.stderr
-    return ''
+def _run_validation(cmd: List[str], input_data: Optional[str] = None, use_temp_file: bool = False, file_suffix: str = '') -> Optional[str]:
+    """Run a validation command using subprocess, optionally using a temporary file."""
+    temp_path = None
+    if use_temp_file:
+        # Create a temporary file for validators that require a file input
+        with tempfile.NamedTemporaryFile(delete=False, suffix=file_suffix, mode='w') as tmp:
+            tmp.write(input_data if input_data else '')
+            temp_path = tmp.name
+        cmd = [arg.replace('<tempfile>', temp_path)
+               if '<tempfile>' in arg else arg for arg in cmd]
+
+    try:
+        # Run the command with input redirected from stdin if not using a temporary file
+        result = subprocess.run(
+            cmd, input=input_data if not use_temp_file else None, capture_output=True, text=True)
+        if result.returncode == 0:
+            return None
+        else:
+            return result.stderr
+    finally:
+        if temp_path:
+            os.remove(temp_path)
 
 
-def _validate_javascript(content: str) -> str:
-    # cmd = f'node -e "{content}"'
-    # result = CmdRunAction(cmd).run(AgentController())
-    # if result.exit_code != 0:
-    #    return result.stderr
-    return ''
+def _validate_python(content: str) -> Optional[str]:
+    """Validate Python code using Flake8."""
+    cmd = ['flake8', '--select=F821,F822,F831,E111,E112,E113,E999,E902', '<tempfile>']
+    return _run_validation(cmd, input_data=content, use_temp_file=True, file_suffix='.py')
+
+
+def _validate_javascript(content: str) -> Optional[str]:
+    """Validate JavaScript code using ESLint."""
+    cmd = [
+        'eslint', '--no-ignore', '--rule', 'semi: [error, always]', '--no-config-lookup',
+        '--stdin', '--format', 'json'
+    ]
+    return _run_validation(cmd, input_data=content, use_temp_file=False)
 
 
 def _validate_cpp(content: str) -> str:
