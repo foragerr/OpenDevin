@@ -38,9 +38,11 @@ jobs:
         ISSUE_TITLE: ${{ github.event.issue.title }}
         ISSUE_BODY: ${{ github.event.issue.body }}
         LLM_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        POETRY_VIRTUALENVS_CREATE: false
+        VIRTUAL_ENV: /app/.venv
+        SANDBOX_TYPE: exec
       run: |
         poetry env info
-        poetry show
         poetry run python ./opendevin/main.py -d "./" -i 50 -f task.txt -d $GITHUB_WORKSPACE
 
     - name: Setup Git, Create Branch, and Commit Changes
