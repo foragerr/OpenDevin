@@ -14,7 +14,7 @@ jobs:
     if: github.event.label.name == 'dogfood-this'
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/foragerr/opendevin-lite:latest
+      image: ghcr.io/opendevin/opendevin:rb-docker-tags
       volumes:
         - /var/run/docker.sock:/var/run/docker.sock
 
@@ -38,12 +38,8 @@ jobs:
         ISSUE_TITLE: ${{ github.event.issue.title }}
         ISSUE_BODY: ${{ github.event.issue.body }}
         LLM_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        POETRY_VIRTUALENVS_CREATE: false
-        VIRTUAL_ENV: /app/.venv
-        SANDBOX_TYPE: exec
       run: |
-        poetry env info
-        poetry run python ./opendevin/main.py -d "./" -i 50 -f task.txt -d $GITHUB_WORKSPACE
+        python ./opendevin/main.py -d "./" -i 50 -f task.txt -d $GITHUB_WORKSPACE
 
     - name: Setup Git, Create Branch, and Commit Changes
       run: |
