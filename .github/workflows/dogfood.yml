@@ -38,6 +38,7 @@ jobs:
         ISSUE_TITLE: ${{ github.event.issue.title }}
         ISSUE_BODY: ${{ github.event.issue.body }}
         LLM_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        SANDBOX_TYPE: exec
       run: |
         python ./opendevin/main.py -d "./" -i 50 -f task.txt -d $GITHUB_WORKSPACE
 
