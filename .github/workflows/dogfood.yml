@@ -19,6 +19,9 @@ jobs:
         - /var/run/docker.sock:/var/run/docker.sock
 
     steps:
+    - name: install git
+      run: apt-get install -y git
+
     - name: Checkout Repository
       uses: actions/checkout@v4
 
