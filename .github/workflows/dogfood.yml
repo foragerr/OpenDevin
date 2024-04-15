@@ -13,24 +13,14 @@ jobs:
   open-devin:
     if: github.event.label.name == 'dogfood-this'
     runs-on: ubuntu-latest
-    environment: OpenAI
+    container:
+      image: ghcr.io/foragerr/opendevin-lite:latest
+      volumes:
+        - /var/run/docker.sock:/var/run/docker.sock
 
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v4
-
-    - name: Install poetry 
-      run: pipx install poetry 
-
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.12'
-        cache: 'poetry'
-    
-    - name: Install Dependencies
-      run: |
-        make build
 
     - name: Write Task File
       env:
@@ -101,10 +91,10 @@ jobs:
           --head "${{ github.head_ref }}" \
           --base "${{ env.DEFAULT_BRANCH }}" \
           | grep -o 'https://github.com/[^ ]*')
-        
+
         # Extract PR number from URL
         PR_NUMBER=$(echo "$PR_URL" | grep -o '[0-9]\+$')
-        
+
         # Set environment vars
         echo "PR_URL=$PR_URL" >> $GITHUB_ENV
         echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
