@@ -22,7 +22,8 @@ RUN apt-get update -y \
     && apt-get install -y curl make git build-essential \
     && python3 -m pip install poetry  --break-system-packages
 
-COPY ./pyproject.toml ./poetry.lock ./
+COPY ./pyproject.toml ./poetry.lock ./poetry.toml ./
+ENV POETRY_REQUESTS_TIMEOUT=300
 RUN poetry install --without evaluation
 
 COPY ./opendevin ./opendevin
