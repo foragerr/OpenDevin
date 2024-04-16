@@ -48,6 +48,7 @@ jobs:
     - name: Setup Git, Create Branch, and Commit Changes
       run: |
         # Setup Git configuration
+        git config --global --add safe.directory /__w/OpenDevin/OpenDevin
         git config --global user.name 'OpenDevin'
         git config --global user.email 'OpenDevin@users.noreply.github.com'
 
