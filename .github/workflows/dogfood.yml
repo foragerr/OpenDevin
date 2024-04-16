@@ -44,11 +44,12 @@ jobs:
         SANDBOX_TYPE: exec
       run: |
         python ./opendevin/main.py -d "./" -i 50 -f task.txt -d $GITHUB_WORKSPACE
+        rm task.txt
 
     - name: Setup Git, Create Branch, and Commit Changes
       run: |
         # Setup Git configuration
-        git config --global --add safe.directory /__w/OpenDevin/OpenDevin
+        git config --global --add safe.directory $PWD
         git config --global user.name 'OpenDevin'
         git config --global user.email 'OpenDevin@users.noreply.github.com'
 
