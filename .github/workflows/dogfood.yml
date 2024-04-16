@@ -19,8 +19,8 @@ jobs:
         - /var/run/docker.sock:/var/run/docker.sock
 
     steps:
-    - name: install git
-      run: apt-get install -y git
+    - name: install git, github cli
+      run: apt-get install -y git gh
 
     - name: Checkout Repository
       uses: actions/checkout@v4
@@ -70,10 +70,6 @@ jobs:
 
         # Push changes
         git push --set-upstream origin $BRANCH_NAME
-
-    - name: Install GitHub CLI
-      run: |
-        sudo apt-get install gh
 
     - name: Fetch Default Branch
       env:
